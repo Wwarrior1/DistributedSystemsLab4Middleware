@@ -1,5 +1,5 @@
 .idea/
 lab4/
-!/lab4/build.gradle
-!/lab4/settings.gradle
+!lab4/build.gradle
+!lab4/settings.gradle
 target/
