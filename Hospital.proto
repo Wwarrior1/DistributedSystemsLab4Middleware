@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "agh.sr.zad4.gen";
+
+package hospital;
+
+// BASIC
+message Patient {
+    string PESEL = 1;
+    string name = 2;
+    repeated Examination examinations = 3;
+}
+message Examination {
+    string PESEL = 1;
+    int32 doctorId = 2;
+    string dateDoctor = 3;
+    string dateLab = 4;
+    repeated Parameter parameters = 5;
+    enum StatusCode {
+        PENDING = 0;
+        DONE = 1;
+    }
+    StatusCode statusCode = 6;
+}
+message Parameter {
+    string name = 1;
+    string unit = 2;
+    float value = 3;
+    float minValue = 4;
+    float maxValue = 5;
+}
+message PatientPESEL {
+    string PESEL = 1;
+}
+message Empty {
+}
+
+// RESPONSES
+message SimpleResponse {
+    enum StatusCode {
+        OK = 0;
+        ERROR = 1;
+    }
+    StatusCode statusCode = 1;
+    string msg = 2;
+}
+message Examinations {
+    enum StatusCode {
+        FOUND = 0;
+        NOT_FOUND = 1;
+    }
+    StatusCode statusCode = 1;
+    Patient patient = 2;
+    Examination examination = 3;
+}
+message Patients {
+    enum StatusCode {
+        FOUND = 0;
+        NOT_FOUND = 1;
+    }
+    StatusCode statusCode = 1;
+    Patient patient = 2;
+}
+
+// SERVICES
+service PatientSerice {
+    rpc findPatient (PatientPESEL) returns (stream Examinations);
+}
+service DoctorService {
+    rpc findPatients (Empty) returns (stream Patients);
+    rpc findExaminations (PatientPESEL) returns (stream Examinations);
+    rpc findExaminationsAll (Empty) returns (stream Examinations);
+    rpc createPatient (Patient) returns (SimpleResponse);
+    rpc orderExamination (Examination) returns (SimpleResponse);
+}
+service LabService {
+    rpc AddExamination (Empty) returns (SimpleResponse);
+}
